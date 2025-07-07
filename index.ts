@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import * as dotenv from 'dotenv';
+dotenv.config();
 import { Command } from 'commander';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
@@ -12,7 +14,7 @@ async function getWorkspaceAndUser() {
     const user = await clockify.getUser();
 
     if (!user) {
-        console.log(chalk.red('Could not connect to Clockify. Please check your API key.'));
+        console.log(chalk.red('[index] Could not connect to Clockify. Please check your API key.'));
 
         process.exit(1);
     }
@@ -50,13 +52,13 @@ program
                 type: 'list',
                 name: 'selectedProjectId',
                 message: 'Which project do you want to work on?',
-                choices: projects.map(p => ({ name: p.name, value: p.id })),
+                choices: projects.map((p: any) => ({ name: p.name, value: p.id })),
             },
         ]);
 
         const entry = await clockify.startTimer(workspaceId, selectedProjectId);
         if (entry) {
-            const projectName = projects.find(p => p.id === selectedProjectId).name;
+            const projectName = projects.find((p: any) => p.id === selectedProjectId).name;
             console.log(chalk.green(`Timer started for project: ${chalk.bold(projectName)}`));
         }
     });
@@ -83,7 +85,7 @@ program
 
         if (activeEntry) {
             const startTime = new Date(activeEntry.timeInterval.start);
-            const duration = (new Date() - startTime) / 1000; // in seconds
+            const duration = (new Date().getTime() - startTime.getTime()) / 1000; // in seconds
             const hours = Math.floor(duration / 3600);
             const minutes = Math.floor((duration % 3600) / 60);
 

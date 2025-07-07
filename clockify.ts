@@ -13,8 +13,8 @@ export class Clockify {
             const response = await this.httpClient.get('/user');
 
             return response.data;
-        } catch (error) {
-            console.error('Could not connect to Clockify. Please check your API key.');
+        } catch (error: any) {
+            console.error('[clockify] Could not connect to Clockify. Please check your API key.');
 
             return null;
         }
@@ -41,7 +41,7 @@ export class Clockify {
             });
 
             return response.data;
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error starting timer:', error.response?.data?.message || error.message);
 
             return null;
@@ -55,7 +55,7 @@ export class Clockify {
             });
 
             return response.data;
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error stopping timer:', error.response?.data?.message || error.message);
 
             return null;
@@ -66,7 +66,7 @@ export class Clockify {
         try {
             const response = await this.httpClient.get(`/workspaces/${workspaceId}/user/${userId}/time-entries?in-progress=true`);
             return response.data[0];
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error fetching active timer:', error.response?.data?.message || error.message);
 
             return null;

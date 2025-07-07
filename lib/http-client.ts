@@ -1,5 +1,4 @@
 import axios, { AxiosInstance } from "axios";
-import appConfig from '../config/app';
 import clockifyConfig from '../config/clockify';
 
 export class HttpClient {
@@ -7,11 +6,11 @@ export class HttpClient {
 
     constructor() {
         this.client = axios.create({
-            baseURL: appConfig.appBaseUrl,
+            baseURL: clockifyConfig.baseUrl,
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': `Bearer ${clockifyConfig.clockifyApiKey}`
+                'X-Api-Key': clockifyConfig.apiKey
             }
         });
     }
