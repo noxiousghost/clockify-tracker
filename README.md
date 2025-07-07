@@ -9,6 +9,7 @@ This is a simple command-line interface (CLI) tool designed to help you track yo
 To get started with the Clockify Tracker CLI, follow these steps:
 
 1.  **Clone the repository:**
+
     ```bash
     git clone <repository_url>
     cd clockify-tracker
@@ -66,18 +67,21 @@ yarn build
 
 Once built, you can run the CLI commands using `yarn clock start`:
 
--   **Start a new time entry:**
-    ```bash
-    yarn clock start
-    ```
-    This will prompt you to select a project from your curated list.
+- **Start a new time entry:**
 
--   **Stop the currently running time entry:**
-    ```bash
-    yarn clock stop
-    ```
+  ```bash
+  yarn clock start
+  ```
 
--   **Check the status of the current timer:**
-    ```bash
-    yarn clock status
-    ```
+  This will prompt you to select a project from your curated list.
+
+- **Stop the currently running time entry:**
+
+  ```bash
+  yarn clock stop
+  ```
+
+- **Check the status of the current timer:**
+  ```bash
+  yarn clock status
+  ```
