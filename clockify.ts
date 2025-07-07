@@ -4,7 +4,6 @@ import { HttpClient } from './lib/http-client.js';
 interface ClockifyProject {
   id: string;
   name: string;
-  // Add other properties if needed
 }
 
 export class Clockify {
@@ -33,7 +32,7 @@ export class Clockify {
     try {
       let allProjects: ClockifyProject[] = [];
       let page = 1;
-      const pageSize = 50; // Clockify default page size
+      const pageSize = 50;
       let hasMore = true;
 
       while (hasMore) {
