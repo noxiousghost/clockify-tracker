@@ -13,7 +13,7 @@ const program = new Command();
 const clockify = new Clockify();
 
 async function getLocalProjects(): Promise<{ id: string; name: string }[]> {
-    const localProjectsPath = path.join(__dirname, '../config/local-projects.json');
+    const localProjectsPath = path.join(__dirname, '../data/local-projects.json');
     try {
         const data = fs.readFileSync(localProjectsPath, 'utf8');
         return JSON.parse(data);

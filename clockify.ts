@@ -24,7 +24,7 @@ export class Clockify {
         try {
             let allProjects: any[] = [];
             let page = 1;
-            const pageSize = 50; // Clockify default page size
+            const pageSize = 50;
             let hasMore = true;
 
             while (hasMore) {
