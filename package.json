@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "npx tsc",
-    "start": "node dist/index.js"
+    "clock": "node dist/index.js"
   },
   "dependencies": {
     "axios": "^1.10.0",
