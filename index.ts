@@ -53,7 +53,8 @@ program.name('tracker').description('A CLI to track your time in Clockify').vers
 program
   .command('start')
   .description('Start a new time entry. Select a project interactively.')
-  .action(async () => {
+  .argument('[message]', 'Description for the time entry')
+  .action(async (message) => {
     const { workspaceId } = await getWorkspaceAndUser();
 
     let projects: Project[] = await clockify.getProjects(workspaceId);
@@ -92,7 +93,7 @@ program
       },
     ]);
 
-    const entry = await clockify.startTimer(workspaceId, selectedProjectId);
+    const entry = await clockify.startTimer(workspaceId, selectedProjectId, message);
     if (entry) {
       const projectName = projects.find((p: { name: string; id: string }) => p.id === selectedProjectId)?.name;
       console.log(chalk.green(`Timer started for project: ${chalk.bold(projectName)}`));
