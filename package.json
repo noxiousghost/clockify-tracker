@@ -9,5 +9,9 @@
     "commander": "^14.0.0",
     "dotenv": "^17.0.1",
     "inquirer": "^12.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "typescript": "^5.8.3"
   }
 }

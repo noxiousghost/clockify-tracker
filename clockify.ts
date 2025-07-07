@@ -25,7 +25,7 @@ export class Clockify {
             const response = await this.httpClient.get(`/workspaces/${workspaceId}/projects`);
 
             return response.data;
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error fetching projects:', error.response?.data?.message || error.message);
 
             return [];
