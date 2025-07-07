@@ -6,9 +6,21 @@ import { Command } from 'commander';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import { Clockify } from './clockify';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const program = new Command();
 const clockify = new Clockify();
+
+async function getLocalProjects(): Promise<{ id: string; name: string }[]> {
+    const localProjectsPath = path.join(__dirname, '../config/local-projects.json');
+    try {
+        const data = fs.readFileSync(localProjectsPath, 'utf8');
+        return JSON.parse(data);
+    } catch (error) {
+        return [];
+    }
+}
 
 async function getWorkspaceAndUser() {
     const user = await clockify.getUser();
@@ -40,7 +52,23 @@ program
     .action(async () => {
         const { workspaceId } = await getWorkspaceAndUser();
 
-        const projects = await clockify.getProjects(workspaceId);
+        let projects = await clockify.getProjects(workspaceId);
+        let localProjects = await getLocalProjects();
+
+        if (localProjects.length === 0) {
+            // If local-projects.json is empty or doesn't exist, populate it with all project IDs and names
+            const allProjects = projects.map((p: any) => ({ id: p.id, name: p.name }));
+            const localProjectsPath = path.join(__dirname, '../data/local-projects.json');
+            fs.writeFileSync(localProjectsPath, JSON.stringify(allProjects, null, 2), 'utf8');
+            console.log(chalk.green('All projects have been saved to data/local-projects.json. Please edit this file to select your preferred projects.'));
+            localProjects = allProjects;
+        }
+
+        if (localProjects.length > 0) {
+            const localProjectIds = localProjects.map(p => p.id);
+            projects = projects.filter((p: any) => localProjectIds.includes(p.id));
+        }
+
         if (!projects || projects.length === 0) {
             console.log(chalk.yellow('No projects found in your workspace.'));
 

@@ -22,11 +22,30 @@ export class Clockify {
 
     async getProjects(workspaceId: string) {
         try {
-            const response = await this.httpClient.get(`/workspaces/${workspaceId}/projects`);
+            let allProjects: any[] = [];
+            let page = 1;
+            const pageSize = 50; // Clockify default page size
+            let hasMore = true;
 
-            return response.data;
+            while (hasMore) {
+                const response = await this.httpClient.get(`/workspaces/${workspaceId}/projects`, {
+                    params: {
+                        page: page,
+                        'page-size': pageSize
+                    }
+                });
+
+                if (response.data.length > 0) {
+                    allProjects = allProjects.concat(response.data);
+                    page++;
+                } else {
+                    hasMore = false;
+                }
+            }
+
+            return allProjects;
         } catch (error: any) {
-            console.error('Error fetching projects:', error.response?.data?.message || error.message);
+            console.error('Error fetching projects:', error.response?.data?.message || error.message, error);
 
             return [];
         }
