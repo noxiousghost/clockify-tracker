@@ -86,7 +86,7 @@ Once built, you can run the CLI commands using the following commands:
 - **Start a new time entry:**
 
   ```bash
-  yarn clock start
+  yarn clock start "Task description"
   ```
 
   This will prompt you to select a project from your curated list.
