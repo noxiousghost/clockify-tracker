@@ -40,6 +40,7 @@ export class Clockify {
           params: {
             page: page,
             'page-size': pageSize,
+            archived: false,
           },
         });
 
