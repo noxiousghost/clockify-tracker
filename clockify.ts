@@ -91,9 +91,8 @@ export class Clockify {
 
   async stopTimer(workspaceId: string, userId: string) {
     try {
-      const completedAt = new Date().toISOString();
       const response = await this.httpClient.patch(`/workspaces/${workspaceId}/user/${userId}/time-entries`, {
-        end: completedAt,
+        end: new Date().toISOString(),
       });
 
       return response.data;

@@ -117,6 +117,8 @@ program
     const { workspaceId, userId } = await getWorkspaceAndUser();
     const stoppedEntry = await clockify.stopTimer(workspaceId, userId);
     if (stoppedEntry) {
+      const completedAt = new Date().toISOString();
+      completeLatestSession(completedAt);
       console.log(chalk.red('Timer stopped.'));
     } else {
       console.log(chalk.yellow('No timer was running.'));
