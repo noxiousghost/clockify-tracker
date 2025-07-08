@@ -70,7 +70,7 @@ Once built, you can run the CLI commands using the following commands:
 - **Monitor idle state and auto-manage timers:**
 
   ```bash
-  yarn clock monitor
+  yarn monitor
   ```
 
   This command will monitor your system's idle time and automatically manage your Clockify timer:
@@ -98,3 +98,31 @@ Once built, you can run the CLI commands using the following commands:
   ```bash
   yarn clock status
   ```
+
+---
+
+### Manage Monitor
+
+- **Restart the monitor process (after code changes):**
+
+  ```bash
+  yarn monitor:restart
+  ```
+
+  Use this command to restart the monitor process, for example after making code changes or updating dependencies. This ensures the monitor is running the latest version of your code.
+
+- **Stop the monitor process:**
+
+  ```bash
+  yarn monitor:stop
+  ```
+
+  This command will stop the monitor process if it is running in the background. Use this when you want to fully halt all automatic idle monitoring and timer management.
+
+- **Show monitor logs:**
+
+  ```bash
+  yarn monitor:logs
+  ```
+
+  This command will display logs related to the monitor process. Use it to review idle/active transitions, timer events, and session details that have been recorded while the monitor was running. This is useful for troubleshooting, auditing, or reviewing your time tracking history.

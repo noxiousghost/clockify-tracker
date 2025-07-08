@@ -9,10 +9,10 @@
     "lint": "eslint . --ext .ts",
     "clock": "node dist/index.js",
     "clockd": "npx pm2 start dist/index.js --name clockify-tracker --",
-    "clockd-restart": "npx pm2 restart clockify-tracker",
-    "clockd-stop": "npx pm2 stop clockify-tracker",
-    "clockd-logs": "npx pm2 logs clockify-tracker",
     "monitor": "yarn clockd monitor",
+    "monitor:restart": "npx pm2 restart clockify-tracker",
+    "monitor:stop": "npx pm2 stop clockify-tracker",
+    "monitor:logs": "npx pm2 logs clockify-tracker",
     "prepare": "husky"
   },
   "dependencies": {
