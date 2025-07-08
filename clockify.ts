@@ -75,7 +75,8 @@ export class Clockify {
         start: startedAt,
       });
 
-      logSessionStart(sessionId, startedAt);
+      // Log session to SQLite
+      logSessionStart(sessionId, projectId, description, startedAt);
 
       return response.data;
     } catch (error: unknown) {

@@ -8,7 +8,7 @@ import { Clockify } from './clockify.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import { completeLatestSession } from './lib/db.js';
+import { completeLatestSession, getLatestSession } from './lib/db.js';
 
 interface Project {
   id: string;
@@ -153,11 +153,14 @@ program
 
     console.log(chalk.blue('Monitoring system idle time...'));
 
+    let lastIdle = false;
+
     setInterval(async () => {
       const idleModule = await import('desktop-idle');
       const idleTime = idleModule.default.getIdleTime();
 
       if (idleTime >= IDLE_THRESHOLD_SECONDS) {
+        lastIdle = true;
         const activeEntry = await clockify.getActiveTimer(workspaceId, userId);
         if (activeEntry) {
           const completedAt = new Date().toISOString();
@@ -169,6 +172,20 @@ program
             console.log(chalk.red('Timer stopped due to idle activity.'));
           }
         }
+      } else {
+        // User is active
+        if (lastIdle) {
+          // Check if the latest session was autoCompleted, if yes, start new timer
+          const latestSession = getLatestSession();
+          if (latestSession && latestSession.isAutoCompleted && latestSession.completedAt) {
+            const activeEntry = await clockify.getActiveTimer(workspaceId, userId);
+            if (!activeEntry) {
+              await clockify.startTimer(workspaceId, latestSession.projectId, latestSession.description);
+              console.log(chalk.green('User is active again. Timer restarted for the last used project.'));
+            }
+          }
+        }
+        lastIdle = false;
       }
     }, 5000); // Check every 5 seconds
   });
