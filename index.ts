@@ -149,7 +149,7 @@ program
   .description('Monitor system idle time and stop the Clockify timer if idle.')
   .action(async () => {
     const { workspaceId, userId } = await getWorkspaceAndUser();
-    const IDLE_THRESHOLD_SECONDS = 60; // 5 minutes
+    const IDLE_THRESHOLD_SECONDS = 300; // 5 minutes
 
     console.log(chalk.blue('Monitoring system idle time...'));
 
