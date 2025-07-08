@@ -65,7 +65,23 @@ yarn build
 
 ### Run the application
 
-Once built, you can run the CLI commands using `yarn clock start`:
+Once built, you can run the CLI commands using the following commands:
+
+- **Monitor idle state and auto-manage timers:**
+
+  ```bash
+  yarn monitor
+  ```
+
+  This command will monitor your system's idle time and automatically manage your Clockify timer:
+  - If you are idle for more than 5 minutes, the currently running timer will be stopped.
+  - When you become active again (move the mouse, press a key, etc.), if your last session was auto-completed due to idleness, a new timer will automatically be created for the last used project.
+  - All session events (start, stop, auto-complete, resume) are logged locally in the SQLite database, including project and description.
+
+  This ensures your time tracking is accurate even if you step away from your computer or forget to manually stop and restart your timer.
+
+  > Note: This ensures your time tracking is accurate even if you step away from your computer or forget to manually stop and restart your timer.
+  > If you do not want the background process to check your idle state, you can skip this.
 
 - **Start a new time entry:**
 
@@ -85,3 +101,31 @@ Once built, you can run the CLI commands using `yarn clock start`:
   ```bash
   yarn clock status
   ```
+
+---
+
+### Manage Monitor
+
+- **Restart the monitor process (after code changes):**
+
+  ```bash
+  yarn monitor:restart
+  ```
+
+  Use this command to restart the monitor process, for example after making code changes or updating dependencies. This ensures the monitor is running the latest version of your code.
+
+- **Stop the monitor process:**
+
+  ```bash
+  yarn monitor:stop
+  ```
+
+  This command will stop the monitor process if it is running in the background. Use this when you want to fully halt all automatic idle monitoring and timer management.
+
+- **Show monitor logs:**
+
+  ```bash
+  yarn monitor:logs
+  ```
+
+  This command will display logs related to the monitor process. Use it to review idle/active transitions, timer events, and session details that have been recorded while the monitor was running. This is useful for troubleshooting, auditing, or reviewing your time tracking history.

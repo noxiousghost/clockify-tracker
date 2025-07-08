@@ -1,5 +1,7 @@
 import { AxiosInstance } from 'axios';
 import { HttpClient } from './lib/http-client.js';
+import { logSessionStart } from './lib/db.js';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ClockifyProject {
   id: string;
@@ -65,11 +67,16 @@ export class Clockify {
 
   async startTimer(workspaceId: string, projectId: string, description = 'Working on a task...') {
     try {
+      const startedAt = new Date().toISOString();
+      const sessionId = uuidv4();
       const response = await this.httpClient.post(`/workspaces/${workspaceId}/time-entries`, {
         projectId: projectId,
         description: description,
-        start: new Date().toISOString(),
+        start: startedAt,
       });
+
+      // Log session to SQLite
+      logSessionStart(sessionId, projectId, description, startedAt);
 
       return response.data;
     } catch (error: unknown) {

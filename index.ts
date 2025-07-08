@@ -8,6 +8,7 @@ import { Clockify } from './clockify.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import { completeLatestSession, getLatestSession } from './lib/db.js';
 
 interface Project {
   id: string;
@@ -116,6 +117,8 @@ program
     const { workspaceId, userId } = await getWorkspaceAndUser();
     const stoppedEntry = await clockify.stopTimer(workspaceId, userId);
     if (stoppedEntry) {
+      const completedAt = new Date().toISOString();
+      completeLatestSession(completedAt);
       console.log(chalk.red('Timer stopped.'));
     } else {
       console.log(chalk.yellow('No timer was running.'));
@@ -141,6 +144,52 @@ program
     } else {
       console.log(chalk.yellow('No timer is currently running.'));
     }
+  });
+
+program
+  .command('monitor')
+  .description('Monitor system idle time and stop the Clockify timer if idle.')
+  .action(async () => {
+    const { workspaceId, userId } = await getWorkspaceAndUser();
+    const IDLE_THRESHOLD_SECONDS = 300; // 5 minutes
+
+    console.log(chalk.blue('Monitoring system idle time...'));
+
+    let lastIdle = false;
+
+    setInterval(async () => {
+      const idleModule = await import('desktop-idle');
+      const idleTime = idleModule.default.getIdleTime();
+
+      if (idleTime >= IDLE_THRESHOLD_SECONDS) {
+        lastIdle = true;
+        const activeEntry = await clockify.getActiveTimer(workspaceId, userId);
+        if (activeEntry) {
+          const completedAt = new Date().toISOString();
+          console.log(chalk.yellow(`System idle for ${Math.floor(idleTime)} seconds. Stopping timer...`));
+
+          const stoppedEntry = await clockify.stopTimer(workspaceId, userId);
+          if (stoppedEntry) {
+            completeLatestSession(completedAt, true);
+            console.log(chalk.red('Timer stopped due to idle activity.'));
+          }
+        }
+      } else {
+        // User is active
+        if (lastIdle) {
+          // Check if the latest session was autoCompleted, if yes, start new timer
+          const latestSession = getLatestSession();
+          if (latestSession && latestSession.isAutoCompleted && latestSession.completedAt) {
+            const activeEntry = await clockify.getActiveTimer(workspaceId, userId);
+            if (!activeEntry) {
+              await clockify.startTimer(workspaceId, latestSession.projectId, latestSession.description);
+              console.log(chalk.green('User is active again. Timer restarted for the last used project.'));
+            }
+          }
+        }
+        lastIdle = false;
+      }
+    }, 5000); // Check every 5 seconds
   });
 
 program.parse(process.argv);
