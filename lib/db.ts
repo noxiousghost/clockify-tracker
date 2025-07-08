@@ -36,6 +36,7 @@ function getDb(): Database.Database {
       )
     `);
   }
+
   return dbInstance;
 }
 
@@ -44,13 +45,8 @@ export function logSessionStart(id: string, projectId: string, description: stri
   const stmt = db.prepare(
     'INSERT INTO sessions (id, projectId, description, startedAt, isAutoCompleted) VALUES (?, ?, ?, ?, ?)',
   );
-  stmt.run(id, projectId, description, startedAt, 0);
-}
 
-export function logSessionEnd(id: string, completedAt: string, isAutoCompleted = false) {
-  const db = getDb();
-  const stmt = db.prepare('UPDATE sessions SET completedAt = ?, isAutoCompleted = ? WHERE id = ?');
-  stmt.run(completedAt, isAutoCompleted ? 1 : 0, id);
+  stmt.run(id, projectId, description, startedAt, 0);
 }
 
 export function completeLatestSession(completedAt: string, isAutoCompleted = false) {
@@ -62,6 +58,7 @@ export function completeLatestSession(completedAt: string, isAutoCompleted = fal
       SELECT id FROM sessions WHERE completedAt IS NULL ORDER BY startedAt DESC LIMIT 1
     )
   `);
+
   stmt.run(completedAt, isAutoCompleted ? 1 : 0);
 }
 
@@ -70,5 +67,6 @@ export function getLatestSession() {
   const stmt = db.prepare(`
     SELECT * FROM sessions ORDER BY startedAt DESC LIMIT 1
   `);
+
   return SessionSchema.parse(stmt.get());
 }

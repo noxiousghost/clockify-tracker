@@ -8,6 +8,11 @@
     "build": "npx tsc",
     "lint": "eslint . --ext .ts",
     "clock": "node dist/index.js",
+    "clockd": "npx pm2 start dist/index.js --name clockify-tracker --",
+    "clockd-restart": "npx pm2 restart clockify-tracker",
+    "clockd-stop": "npx pm2 stop clockify-tracker",
+    "clockd-logs": "npx pm2 logs clockify-tracker",
+    "monitor": "yarn clockd monitor",
     "prepare": "husky"
   },
   "dependencies": {
@@ -31,6 +36,7 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
     "husky": "^9.1.7",
+    "pm2": "^6.0.8",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
