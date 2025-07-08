@@ -1,6 +1,6 @@
 import { AxiosInstance } from 'axios';
 import { HttpClient } from './lib/http-client.js';
-import { logSessionStart, completeLatestSession } from './lib/db.js';
+import { logSessionStart } from './lib/db.js';
 import { v4 as uuidv4 } from 'uuid';
 
 interface ClockifyProject {
@@ -94,8 +94,6 @@ export class Clockify {
       const response = await this.httpClient.patch(`/workspaces/${workspaceId}/user/${userId}/time-entries`, {
         end: completedAt,
       });
-
-      completeLatestSession(completedAt);
 
       return response.data;
     } catch (error: unknown) {

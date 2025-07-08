@@ -8,6 +8,7 @@ import { Clockify } from './clockify.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import { completeLatestSession } from './lib/db.js';
 
 interface Project {
   id: string;
@@ -144,7 +145,7 @@ program
   });
 
 program
-  .command('monitor-idle')
+  .command('monitor')
   .description('Monitor system idle time and stop the Clockify timer if idle.')
   .action(async () => {
     const { workspaceId, userId } = await getWorkspaceAndUser();
@@ -159,9 +160,12 @@ program
       if (idleTime >= IDLE_THRESHOLD_SECONDS) {
         const activeEntry = await clockify.getActiveTimer(workspaceId, userId);
         if (activeEntry) {
+          const completedAt = new Date().toISOString();
           console.log(chalk.yellow(`System idle for ${Math.floor(idleTime)} seconds. Stopping timer...`));
+
           const stoppedEntry = await clockify.stopTimer(workspaceId, userId);
           if (stoppedEntry) {
+            completeLatestSession(completedAt, true);
             console.log(chalk.red('Timer stopped due to idle activity.'));
           }
         }
