@@ -21,9 +21,18 @@ const program = new Command();
 const clockify = new Clockify();
 
 async function getLocalProjects(): Promise<Project[]> {
-  const localProjectsPath = path.join(__dirname, '../data/local-projects.json');
+  const dataDir = path.join(__dirname, '../data');
+  const localProjectsPath = path.join(dataDir, 'local-projects.json');
   try {
-    const data = fs.readFileSync(localProjectsPath, 'utf8');
+    // Ensure the data directory exists
+    await fs.promises.mkdir(dataDir, { recursive: true });
+    // If the file does not exist, create it with an empty array
+    try {
+      await fs.promises.access(localProjectsPath, fs.constants.F_OK);
+    } catch {
+      await fs.promises.writeFile(localProjectsPath, '[]', 'utf8');
+    }
+    const data = await fs.promises.readFile(localProjectsPath, 'utf8');
     return JSON.parse(data);
   } catch (_error: unknown) {
     return [];
