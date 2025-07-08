@@ -65,7 +65,20 @@ yarn build
 
 ### Run the application
 
-Once built, you can run the CLI commands using `yarn clock start`:
+Once built, you can run the CLI commands using the following commands:
+
+- **Monitor idle state and auto-manage timers:**
+
+  ```bash
+  yarn clock monitor
+  ```
+
+  This command will monitor your system's idle time and automatically manage your Clockify timer:
+  - If you are idle for more than 5 minutes, the currently running timer will be stopped.
+  - When you become active again (move the mouse, press a key, etc.), if your last session was auto-completed due to idleness, a new timer will automatically be created for the last used project.
+  - All session events (start, stop, auto-complete, resume) are logged locally in the SQLite database, including project and description.
+
+  This ensures your time tracking is accurate even if you step away from your computer or forget to manually stop and restart your timer.
 
 - **Start a new time entry:**
 
