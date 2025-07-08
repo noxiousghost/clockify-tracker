@@ -34,9 +34,9 @@ Replace `"your_actual_clockify_api_key"` with your personal API key from your Cl
 
 ### Local Projects Filtering
 
-The CLI allows you to filter the projects displayed when starting a new time entry. On the first run of the `start` command, the application will fetch all your Clockify projects and populate `config/local-projects.json` with their IDs and names. You can then edit this file to keep only the projects you frequently work on.
+The CLI allows you to filter the projects displayed when starting a new time entry. On the first run of the `clock start` command, the application will fetch all your Clockify projects and populate `data/local-projects.json` with their IDs and names. You can then edit this file to keep only the projects you frequently work on.
 
-Example `config/local-projects.json`:
+Example `data/local-projects.json`:
 
 ```json
 [
