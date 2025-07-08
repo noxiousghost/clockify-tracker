@@ -80,6 +80,9 @@ Once built, you can run the CLI commands using the following commands:
 
   This ensures your time tracking is accurate even if you step away from your computer or forget to manually stop and restart your timer.
 
+  > Note: This ensures your time tracking is accurate even if you step away from your computer or forget to manually stop and restart your timer.
+  > If you do not want the background process to check your idle state, you can skip this.
+
 - **Start a new time entry:**
 
   ```bash
