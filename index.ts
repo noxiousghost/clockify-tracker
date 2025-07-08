@@ -143,4 +143,30 @@ program
     }
   });
 
+program
+  .command('monitor-idle')
+  .description('Monitor system idle time and stop the Clockify timer if idle.')
+  .action(async () => {
+    const { workspaceId, userId } = await getWorkspaceAndUser();
+    const IDLE_THRESHOLD_SECONDS = 60; // 5 minutes
+
+    console.log(chalk.blue('Monitoring system idle time...'));
+
+    setInterval(async () => {
+      const idleModule = await import('desktop-idle');
+      const idleTime = idleModule.default.getIdleTime();
+
+      if (idleTime >= IDLE_THRESHOLD_SECONDS) {
+        const activeEntry = await clockify.getActiveTimer(workspaceId, userId);
+        if (activeEntry) {
+          console.log(chalk.yellow(`System idle for ${Math.floor(idleTime)} seconds. Stopping timer...`));
+          const stoppedEntry = await clockify.stopTimer(workspaceId, userId);
+          if (stoppedEntry) {
+            console.log(chalk.red('Timer stopped due to idle activity.'));
+          }
+        }
+      }
+    }, 5000); // Check every 5 seconds
+  });
+
 program.parse(process.argv);
