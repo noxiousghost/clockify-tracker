@@ -1,6 +1,6 @@
 import { AxiosInstance } from 'axios';
 import { HttpClient } from './lib/http-client.js';
-import { logSessionStart } from './lib/db.js';
+import { logSessionStart, completeLatestSession } from './lib/db.js';
 import { v4 as uuidv4 } from 'uuid';
 
 interface ClockifyProject {
@@ -74,8 +74,9 @@ export class Clockify {
         description: description,
         start: startedAt,
       });
-      // Log session to SQLite
+
       logSessionStart(sessionId, startedAt);
+
       return response.data;
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -89,9 +90,12 @@ export class Clockify {
 
   async stopTimer(workspaceId: string, userId: string) {
     try {
+      const completedAt = new Date().toISOString();
       const response = await this.httpClient.patch(`/workspaces/${workspaceId}/user/${userId}/time-entries`, {
-        end: new Date().toISOString(),
+        end: completedAt,
       });
+
+      completeLatestSession(completedAt);
 
       return response.data;
     } catch (error: unknown) {
