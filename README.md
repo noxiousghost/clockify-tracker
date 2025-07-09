@@ -102,8 +102,6 @@ Once built, you can run the CLI commands using the following commands:
   yarn clock status
   ```
 
----
-
 ### Manage Monitor
 
 - **Restart the monitor process (after code changes):**
@@ -129,8 +127,6 @@ Once built, you can run the CLI commands using the following commands:
   ```
 
   This command will display logs related to the monitor process. Use it to review idle/active transitions, timer events, and session details that have been recorded while the monitor was running. This is useful for troubleshooting, auditing, or reviewing your time tracking history.
-
----
 
 ## Linux Requirements
 
