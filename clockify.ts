@@ -65,7 +65,7 @@ export class Clockify {
     }
   }
 
-  async startTimer(workspaceId: string, projectId: string, description = 'Working on a task...') {
+  async startTimer(workspaceId: string, projectId: string, description = 'Working on a task...', jiraTicket?: string) {
     try {
       const startedAt = new Date().toISOString();
       const sessionId = uuidv4();
@@ -76,7 +76,7 @@ export class Clockify {
       });
 
       // Log session to SQLite
-      logSessionStart(sessionId, projectId, description, startedAt);
+      logSessionStart(sessionId, projectId, description, startedAt, jiraTicket);
 
       return response.data;
     } catch (error: unknown) {

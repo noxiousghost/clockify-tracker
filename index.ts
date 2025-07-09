@@ -9,6 +9,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { completeLatestSession, getLatestSession } from './lib/db.js';
+import { startJiraTimer, stopJiraTimer } from './lib/jira.js';
 
 interface Project {
   id: string;
@@ -64,7 +65,8 @@ program
   .command('start')
   .description('Start a new time entry. Select a project interactively.')
   .argument('[message]', 'Description for the time entry')
-  .action(async (message) => {
+  .option('-j, --jira <ticket>', 'Jira ticket number')
+  .action(async (message, options) => {
     const { workspaceId } = await getWorkspaceAndUser();
 
     let projects: Project[] = await clockify.getProjects(workspaceId);
@@ -103,8 +105,11 @@ program
       },
     ]);
 
-    const entry = await clockify.startTimer(workspaceId, selectedProjectId, message);
+    const entry = await clockify.startTimer(workspaceId, selectedProjectId, message, options.jira);
     if (entry) {
+      if (options.jira) {
+        await startJiraTimer(options.jira);
+      }
       const projectName = projects.find((p: { name: string; id: string }) => p.id === selectedProjectId)?.name;
       console.log(chalk.green(`Timer started for project: ${chalk.bold(projectName)}`));
     }
@@ -115,10 +120,23 @@ program
   .description('Stop the currently running time entry.')
   .action(async () => {
     const { workspaceId, userId } = await getWorkspaceAndUser();
+    const latestSession = getLatestSession();
     const stoppedEntry = await clockify.stopTimer(workspaceId, userId);
     if (stoppedEntry) {
       const completedAt = new Date().toISOString();
       completeLatestSession(completedAt);
+      if (latestSession.jiraTicket) {
+        const timeSpentSeconds = Math.round(
+          (new Date(completedAt).getTime() - new Date(latestSession.startedAt).getTime()) / 1000,
+        );
+        if (timeSpentSeconds >= 60) {
+          try {
+            await stopJiraTimer(latestSession.jiraTicket, timeSpentSeconds);
+          } catch (error) {
+            console.error('Error stopping Jira timer:', error);
+          }
+        }
+      }
       console.log(chalk.red('Timer stopped.'));
     } else {
       console.log(chalk.yellow('No timer was running.'));
@@ -168,9 +186,22 @@ program
           const completedAt = new Date().toISOString();
           console.log(chalk.yellow(`System idle for ${Math.floor(idleTime)} seconds. Stopping timer...`));
 
+          const latestSession = getLatestSession();
           const stoppedEntry = await clockify.stopTimer(workspaceId, userId);
           if (stoppedEntry) {
             completeLatestSession(completedAt, true);
+            if (latestSession.jiraTicket) {
+              const timeSpentSeconds = Math.round(
+                (new Date(completedAt).getTime() - new Date(latestSession.startedAt).getTime()) / 1000,
+              );
+              if (timeSpentSeconds >= 60) {
+                try {
+                  await stopJiraTimer(latestSession.jiraTicket, timeSpentSeconds);
+                } catch (error) {
+                  console.error('Error stopping Jira timer:', error);
+                }
+              }
+            }
             console.log(chalk.red('Timer stopped due to idle activity.'));
           }
         }
@@ -183,6 +214,9 @@ program
             const activeEntry = await clockify.getActiveTimer(workspaceId, userId);
             if (!activeEntry) {
               await clockify.startTimer(workspaceId, latestSession.projectId, latestSession.description);
+              if (latestSession.jiraTicket) {
+                await startJiraTimer(latestSession.jiraTicket);
+              }
               console.log(chalk.green('User is active again. Timer restarted for the last used project.'));
             }
           }

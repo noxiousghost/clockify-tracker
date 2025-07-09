@@ -17,6 +17,7 @@ const SessionSchema = z.object({
   startedAt: z.string(),
   completedAt: z.string().nullable(),
   isAutoCompleted: z.number(),
+  jiraTicket: z.string().nullable(),
 });
 
 let dbInstance: Database.Database | null = null;
@@ -32,7 +33,8 @@ function getDb(): Database.Database {
         description TEXT NOT NULL,
         startedAt TEXT NOT NULL,
         completedAt TEXT,
-        isAutoCompleted INTEGER DEFAULT 0
+        isAutoCompleted INTEGER DEFAULT 0,
+        jiraTicket TEXT
       )
     `);
   }
@@ -40,13 +42,19 @@ function getDb(): Database.Database {
   return dbInstance;
 }
 
-export function logSessionStart(id: string, projectId: string, description: string, startedAt: string) {
+export function logSessionStart(
+  id: string,
+  projectId: string,
+  description: string,
+  startedAt: string,
+  jiraTicket?: string,
+) {
   const db = getDb();
   const stmt = db.prepare(
-    'INSERT INTO sessions (id, projectId, description, startedAt, isAutoCompleted) VALUES (?, ?, ?, ?, ?)',
+    'INSERT INTO sessions (id, projectId, description, startedAt, isAutoCompleted, jiraTicket) VALUES (?, ?, ?, ?, ?, ?)',
   );
 
-  stmt.run(id, projectId, description, startedAt, 0);
+  stmt.run(id, projectId, description, startedAt, 0, jiraTicket);
 }
 
 export function completeLatestSession(completedAt: string, isAutoCompleted = false) {
