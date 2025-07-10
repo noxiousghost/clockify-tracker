@@ -130,6 +130,32 @@ Once built, you can run the CLI commands using the following commands:
 
 ## Linux Requirements
 
-X server development package and pkg-config are required:
+X server development package and pkg-config are required to run `desktop-idle` package:
 
+```
 apt install libxss-dev pkg-config
+```
+
+## Zsh Alias
+
+If you super lazy just like me, then you can add aliases for different actions. Here is what I use:
+
+```bash
+# Clockify Tracker
+CLOCKIFY_TRACKER_PATH="$HOME/Projects/Personal/clockify-tracker"
+
+ct() {
+  cd "$CLOCKIFY_TRACKER_PATH" || return
+  yarn "$@"
+}
+
+#ct = Clockify Tracker
+alias ctb="ct build" # Build
+alias ctcu="ct clock start" # Clock Up
+alias ctcd="ct clock stop" # Clock down
+alias ctmu="ct monitor" # Monitor Up
+alias ctmd="ct monitor:stop" # Monitor Down
+alias ctmr="ct monitor:restart" # Monitor Restart
+```
+
+Copy the above code in `.zshrc` file and use shortcuts
