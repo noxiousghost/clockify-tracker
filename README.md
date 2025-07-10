@@ -158,4 +158,4 @@ alias ctmd="ct monitor:stop" # Monitor Down
 alias ctmr="ct monitor:restart" # Monitor Restart
 ```
 
-Copy the above code in `.zshrc` file and use shortcuts
+Copy the above code in `.zshrc` file and save it. Then source the file using `source ~/.zshrc`.
