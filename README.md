@@ -27,8 +27,13 @@ To get started with the Clockify Tracker CLI, follow these steps:
 To connect to your Clockify account, you need to provide your API key. Create a `.env` file in the root directory of the project and add your Clockify API key:
 
 ```
-CLOCKIFY_API_KEY="your_actual_clockify_api_key"
+CLOCKIFY_API_KEY="your_clockify_api_key_here"
+ATLASSIAN_URL="https://your_org.atlassian.net/rest/api/3"
+ATLASSIAN_API_TOKEN="your_atlassian_api_token_here"
+ATLASSIAN_EMAIL="username@example.com"
 ```
+
+> Note: If you do not want to use Jira Integration, you can remove the ATLASSIAN variables.
 
 Replace `"your_actual_clockify_api_key"` with your personal API key from your Clockify profile settings.
 
