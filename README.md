@@ -138,7 +138,7 @@ Once built, you can run the CLI commands using the following commands:
 X server development package and pkg-config are required to run `desktop-idle` package:
 
 ```
-apt install libxss-dev pkg-config
+apt install libxss-dev pkg-config build-essential
 ```
 
 ## Zsh Alias
