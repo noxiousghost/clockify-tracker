@@ -165,4 +165,4 @@ alias ms="ct monitor:status" # Monitor Status
 alias ml="ct monitor:logs" # Monitor Logs
 ```
 
-Copy the above code in `.zshrc` file and save it. Then source the file using `source ~/.zshrc`.
+Copy the above code in `.zshrc` file, change `CLOCKIFY_TRACKER_PATH` based on your path and save it. Then source the file using `source ~/.zshrc`.
