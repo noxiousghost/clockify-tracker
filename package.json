@@ -13,6 +13,7 @@
     "monitor:restart": "npx pm2 restart clockify-tracker",
     "monitor:stop": "npx pm2 stop clockify-tracker",
     "monitor:logs": "npx pm2 logs clockify-tracker",
+    "monitor:status": "npx pm2 status clockify-tracker",
     "prepare": "husky"
   },
   "dependencies": {

@@ -155,12 +155,14 @@ ct() {
 }
 
 #ct = Clockify Tracker
-alias ctb="ct build" # Build
-alias ctcu="ct clock start" # Clock Up
-alias ctcd="ct clock stop" # Clock down
-alias ctmu="ct monitor" # Monitor Up
-alias ctmd="ct monitor:stop" # Monitor Down
-alias ctmr="ct monitor:restart" # Monitor Restart
+alias cb="ct build" # Build
+alias cu="ct clock start" # Clock Up
+alias cd="ct clock stop" # Clock down
+alias mu="ct monitor" # Monitor Up
+alias md="ct monitor:stop" # Monitor Down
+alias mr="ct monitor:restart" # Monitor Restart
+alias ms="ct monitor:status" # Monitor Status
+alias ml="ct monitor:logs" # Monitor Logs
 ```
 
 Copy the above code in `.zshrc` file and save it. Then source the file using `source ~/.zshrc`.
