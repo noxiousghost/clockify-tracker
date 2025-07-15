@@ -33,12 +33,6 @@ async function jiraApiRequest(url: string, method: 'POST' | 'GET', body?: unknow
   }
 }
 
-export async function startJiraTimer(ticketId: string) {
-  // This function does not do anything now.
-  // The worklog is created when the timer is stopped.
-  return Promise.resolve();
-}
-
 export async function stopJiraTimer(ticketId: string, timeSpentSeconds: number) {
   const url = `${JIRA_API_URL}/issue/${ticketId}/worklog`;
   const body = {

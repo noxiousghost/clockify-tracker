@@ -9,7 +9,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { completeLatestSession, getLatestSession } from './lib/db.js';
-import { startJiraTimer, stopJiraTimer } from './lib/jira.js';
+import { stopJiraTimer } from './lib/jira.js';
 
 interface Project {
   id: string;
@@ -107,9 +107,6 @@ program
 
     const entry = await clockify.startTimer(workspaceId, selectedProjectId, message, options.jira);
     if (entry) {
-      if (options.jira) {
-        await startJiraTimer(options.jira);
-      }
       const projectName = projects.find((p: { name: string; id: string }) => p.id === selectedProjectId)?.name;
       console.log(chalk.green(`Timer started for project: ${chalk.bold(projectName)}`));
     }
@@ -214,9 +211,6 @@ program
             const activeEntry = await clockify.getActiveTimer(workspaceId, userId);
             if (!activeEntry) {
               await clockify.startTimer(workspaceId, latestSession.projectId, latestSession.description);
-              if (latestSession.jiraTicket) {
-                await startJiraTimer(latestSession.jiraTicket);
-              }
               console.log(chalk.green('User is active again. Timer restarted for the last used project.'));
             }
           }
