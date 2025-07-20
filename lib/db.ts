@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 import Database from 'better-sqlite3';
 import { z } from 'zod';
 
@@ -77,4 +77,12 @@ export function getLatestSession() {
   `);
 
   return SessionSchema.parse(stmt.get());
+}
+
+export function deleteOldSessions(days: number) {
+  const db = getDb();
+  const date = new Date();
+  date.setDate(date.getDate() - days);
+  const stmt = db.prepare('DELETE FROM sessions WHERE startedAt < ?');
+  stmt.run(date.toISOString());
 }

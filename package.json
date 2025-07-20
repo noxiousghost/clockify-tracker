@@ -14,7 +14,8 @@
     "monitor:stop": "npx pm2 stop clockify-tracker",
     "monitor:logs": "npx pm2 logs clockify-tracker",
     "monitor:status": "npx pm2 status clockify-tracker",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:cleanup": "node scripts/db-cleanup.js"
   },
   "dependencies": {
     "axios": "^1.10.0",
