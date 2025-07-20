@@ -3,6 +3,7 @@ import { HttpClient } from './lib/http-client.js';
 import { logSessionStart } from './lib/db.js';
 import { v4 as uuidv4 } from 'uuid';
 import { NotificationCenter } from 'node-notifier';
+import { getJiraTicket } from './lib/jira.js';
 
 interface ClockifyProject {
   id: string;
@@ -108,22 +109,30 @@ export class Clockify {
         return null;
       }
 
+      let finalDescription = description;
+      if (jiraTicket) {
+        const ticket = await getJiraTicket(jiraTicket);
+        if (ticket) {
+          finalDescription = `${jiraTicket} ${ticket.fields.summary}`;
+        }
+      }
+
       const startedAt = new Date().toISOString();
       const sessionId = uuidv4();
       const response = await this.httpClient.post(`/workspaces/${workspaceId}/time-entries`, {
         projectId: projectId,
-        description: description,
+        description: finalDescription,
         start: startedAt,
       });
 
       // Log session to SQLite
-      logSessionStart(sessionId, projectId, description, startedAt, jiraTicket);
+      logSessionStart(sessionId, projectId, finalDescription, startedAt, jiraTicket);
 
       const project = await this.getProjectById(workspaceId, projectId);
 
       this.sendNotification(
         `Timer started for ${project ? project.name : 'a project'}`,
-        description,
+        finalDescription,
         ['Stop'],
         (err, response, metadata) => {
           if (err) {
