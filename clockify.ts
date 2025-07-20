@@ -2,6 +2,7 @@ import { AxiosInstance } from 'axios';
 import { HttpClient } from './lib/http-client.js';
 import { logSessionStart } from './lib/db.js';
 import { v4 as uuidv4 } from 'uuid';
+import { NotificationCenter } from 'node-notifier';
 
 interface ClockifyProject {
   id: string;
@@ -10,9 +11,30 @@ interface ClockifyProject {
 
 export class Clockify {
   private readonly httpClient: AxiosInstance;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private readonly notifier: any;
 
   constructor() {
     this.httpClient = new HttpClient().getClient();
+    this.notifier = new NotificationCenter();
+  }
+
+  private sendNotification(
+    title: string,
+    message: string,
+    actions?: string[],
+    callback?: (err: unknown, response: unknown, metadata: { activationValue?: string }) => void,
+  ) {
+    this.notifier.notify(
+      {
+        title,
+        message,
+        sound: true,
+        wait: true,
+        actions,
+      },
+      callback,
+    );
   }
 
   async getUser() {
@@ -65,8 +87,27 @@ export class Clockify {
     }
   }
 
+  async getProjectById(workspaceId: string, projectId: string): Promise<ClockifyProject | null> {
+    try {
+      const response = await this.httpClient.get(`/workspaces/${workspaceId}/projects/${projectId}`);
+      return response.data;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('Error fetching project:', error.message);
+      } else {
+        console.error('Error fetching project: An unknown error occurred.');
+      }
+      return null;
+    }
+  }
+
   async startTimer(workspaceId: string, projectId: string, description = 'Working on a task...', jiraTicket?: string) {
     try {
+      const user = await this.getUser();
+      if (!user) {
+        return null;
+      }
+
       const startedAt = new Date().toISOString();
       const sessionId = uuidv4();
       const response = await this.httpClient.post(`/workspaces/${workspaceId}/time-entries`, {
@@ -77,6 +118,23 @@ export class Clockify {
 
       // Log session to SQLite
       logSessionStart(sessionId, projectId, description, startedAt, jiraTicket);
+
+      const project = await this.getProjectById(workspaceId, projectId);
+
+      this.sendNotification(
+        `Timer started for ${project ? project.name : 'a project'}`,
+        description,
+        ['Stop'],
+        (err, response, metadata) => {
+          if (err) {
+            console.error(err);
+            return;
+          }
+          if (metadata.activationValue === 'Stop') {
+            this.stopTimer(workspaceId, user.id);
+          }
+        },
+      );
 
       return response.data;
     } catch (error: unknown) {
@@ -94,6 +152,8 @@ export class Clockify {
       const response = await this.httpClient.patch(`/workspaces/${workspaceId}/user/${userId}/time-entries`, {
         end: new Date().toISOString(),
       });
+
+      this.sendNotification('Timer stopped', 'Your timer has been stopped.');
 
       return response.data;
     } catch (error: unknown) {
