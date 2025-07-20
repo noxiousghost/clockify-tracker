@@ -96,6 +96,14 @@ Once built, you can run the CLI commands using the following commands:
 
   This will prompt you to select a project from your curated list.
 
+- **Start a new time entry with a Jira ticket:**
+
+  ```bash
+  yarn clock start -j TICKET-123
+  ```
+
+  When you provide a Jira ticket number with the `-j` flag, the tool will automatically fetch the ticket's title from Jira and prepend it to your time entry description. For example, if the title of `TICKET-123` is "Fix the login button", the description will be saved as `TICKET-123 Fix the login button`. If you also provide a description, it will be appended after the Jira title.
+
 - **Stop the currently running time entry:**
 
   ```bash
