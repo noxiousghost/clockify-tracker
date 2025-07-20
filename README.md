@@ -141,6 +141,29 @@ Once built, you can run the CLI commands using the following commands:
 
   This command will display logs related to the monitor process. Use it to review idle/active transitions, timer events, and session details that have been recorded while the monitor was running. This is useful for troubleshooting, auditing, or reviewing your time tracking history.
 
+### Database Cleanup
+
+To delete old session logs from the local SQLite database, use the `db:cleanup` command:
+
+```bash
+yarn db:cleanup <older-than-number-in-days>
+```
+
+- `<older-than-number-in-days>` (Optional): Specifies the number of days. Session logs older than this number of days will be deleted. If not provided, logs older than 5 days will be deleted by default.
+
+Examples:
+
+- Delete logs older than 5 days (default):
+
+  ```bash
+  yarn db:cleanup
+  ```
+
+- Delete logs older than 5 days:
+  ```bash
+  yarn db:cleanup 5
+  ```
+
 ## Troubleshooting
 
 ### No notifications on macOS
