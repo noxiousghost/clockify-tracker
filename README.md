@@ -133,6 +133,20 @@ Once built, you can run the CLI commands using the following commands:
 
   This command will display logs related to the monitor process. Use it to review idle/active transitions, timer events, and session details that have been recorded while the monitor was running. This is useful for troubleshooting, auditing, or reviewing your time tracking history.
 
+## Troubleshooting
+
+### No notifications on macOS
+
+If you are not receiving notifications on macOS, you may need to adjust your system settings.
+
+- **Check System Settings for Notifications:**
+  - Go to **System Settings > Notifications**.
+  - Look for **Terminal** (or your specific terminal application if you use another one like iTerm).
+  - Make sure that **Allow Notifications** is turned on for it.
+  - If you see an entry for **Node**, ensure it also has permissions.
+
+Often, the first time a script tries to send a notification, macOS will ask for permission. If this was accidentally denied, you won't see any notifications.
+
 ## Linux Requirements
 
 X server development package and pkg-config are required to run `desktop-idle` package:
