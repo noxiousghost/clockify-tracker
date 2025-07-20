@@ -9,26 +9,32 @@ interface ClockifyProject {
   name: string;
 }
 
-interface INotifier {
-  notify(options: { title: string; message: string; sound: boolean; wait: boolean }): void;
-}
-
 export class Clockify {
   private readonly httpClient: AxiosInstance;
-  private readonly notifier: INotifier;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private readonly notifier: any;
 
   constructor() {
     this.httpClient = new HttpClient().getClient();
     this.notifier = new NotificationCenter();
   }
 
-  private sendNotification(title: string, message: string) {
-    this.notifier.notify({
-      title,
-      message,
-      sound: true,
-      wait: false,
-    });
+  private sendNotification(
+    title: string,
+    message: string,
+    actions?: string[],
+    callback?: (err: unknown, response: unknown, metadata: { activationValue?: string }) => void,
+  ) {
+    this.notifier.notify(
+      {
+        title,
+        message,
+        sound: true,
+        wait: true,
+        actions,
+      },
+      callback,
+    );
   }
 
   async getUser() {
@@ -97,6 +103,11 @@ export class Clockify {
 
   async startTimer(workspaceId: string, projectId: string, description = 'Working on a task...', jiraTicket?: string) {
     try {
+      const user = await this.getUser();
+      if (!user) {
+        return null;
+      }
+
       const startedAt = new Date().toISOString();
       const sessionId = uuidv4();
       const response = await this.httpClient.post(`/workspaces/${workspaceId}/time-entries`, {
@@ -110,7 +121,20 @@ export class Clockify {
 
       const project = await this.getProjectById(workspaceId, projectId);
 
-      this.sendNotification(`Timer started for ${project ? project.name : 'a project'}`, description);
+      this.sendNotification(
+        `Timer started for ${project ? project.name : 'a project'}`,
+        description,
+        ['Stop'],
+        (err, response, metadata) => {
+          if (err) {
+            console.error(err);
+            return;
+          }
+          if (metadata.activationValue === 'Stop') {
+            this.stopTimer(workspaceId, user.id);
+          }
+        },
+      );
 
       return response.data;
     } catch (error: unknown) {
