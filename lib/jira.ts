@@ -56,3 +56,8 @@ export async function stopJiraTimer(ticketId: string, timeSpentSeconds: number) 
   console.log('Jira request body:', JSON.stringify(body, null, 2));
   return await jiraApiRequest(url, 'POST', body);
 }
+
+export async function getJiraTicket(ticketId: string) {
+  const url = `${JIRA_API_URL}/issue/${ticketId}`;
+  return await jiraApiRequest(url, 'GET');
+}
