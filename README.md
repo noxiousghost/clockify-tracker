@@ -1,7 +1,7 @@
 # Clocktopus
 
 <p align="center">
-  <img src="assets/logo.png" alt="Clocktopus Logo" />
+  <img src="assets/logo.png" alt="Clocktopus Logo" width="300px" />
 </p>
 
 ## About
