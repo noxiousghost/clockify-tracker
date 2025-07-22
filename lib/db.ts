@@ -44,9 +44,28 @@ function getDb(): Database.Database {
         createdAt TEXT NOT NULL
       )
     `);
+    dbInstance.exec(`
+      CREATE TABLE IF NOT EXISTS event_projects (
+        eventName TEXT PRIMARY KEY,
+        projectId TEXT NOT NULL
+      )
+    `);
   }
 
   return dbInstance;
+}
+
+export function getEventProject(eventName: string): string | null {
+  const db = getDb();
+  const stmt = db.prepare('SELECT projectId FROM event_projects WHERE eventName = ?');
+  const row = stmt.get(eventName) as { projectId: string } | undefined;
+  return row ? row.projectId : null;
+}
+
+export function setEventProject(eventName: string, projectId: string) {
+  const db = getDb();
+  const stmt = db.prepare('INSERT OR REPLACE INTO event_projects (eventName, projectId) VALUES (?, ?)');
+  stmt.run(eventName, projectId);
 }
 
 export function storeToken(token: object) {

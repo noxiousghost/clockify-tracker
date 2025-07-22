@@ -3,7 +3,7 @@ dotenv.config();
 
 import { google } from 'googleapis';
 import { getAuthenticatedClient, getRefreshedToken } from '../lib/google.js';
-import { getLatestToken, storeToken } from '../lib/db.js';
+import { getEventProject, setEventProject, getLatestToken, storeToken } from '../lib/db.js';
 import { Clockify } from '../clockify.js';
 import { program } from 'commander';
 import inquirer from 'inquirer';
@@ -42,8 +42,7 @@ program
   .option('-p, --project-id <projectId>', 'Clockify project ID')
   .parse(process.argv);
 
-const { startDate, endDate } = program.opts();
-let { projectId } = program.opts();
+const { startDate, endDate, projectId } = program.opts();
 
 if (!startDate || !endDate) {
   console.error('Please provide both a start and end date.');
@@ -59,25 +58,19 @@ async function main() {
     return;
   }
 
-  if (!projectId) {
-    let projects = await clockify.getProjects(user.activeWorkspace);
+  const projects = await (async () => {
+    if (projectId) {
+      return [];
+    }
+    const allProjects = await clockify.getProjects(user.activeWorkspace);
     const localProjects = await getLocalProjects();
 
     if (localProjects.length > 0) {
       const localProjectIds = localProjects.map((p) => p.id);
-      projects = projects.filter((p) => localProjectIds.includes(p.id));
+      return allProjects.filter((p) => localProjectIds.includes(p.id));
     }
-
-    const { selectedProjectId } = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'selectedProjectId',
-        message: 'Which project do you want to log these events to?',
-        choices: projects.map((p) => ({ name: p.name, value: p.id })),
-      },
-    ]);
-    projectId = selectedProjectId;
-  }
+    return allProjects;
+  })();
 
   let token = await getLatestToken();
   if (!token) {
@@ -119,11 +112,25 @@ async function main() {
           console.log(`Skipping all-day event: "${event.summary}" on ${event.start.date}`);
           continue;
         }
-        if (event.start && event.start.dateTime && event.end && event.end.dateTime && event.summary) {
+        if (event.summary && event.start && event.start.dateTime && event.end && event.end.dateTime) {
+          let eventProjectId = projectId || getEventProject(event.summary);
+          if (!eventProjectId) {
+            const { selectedProjectId } = await inquirer.prompt([
+              {
+                type: 'list',
+                name: 'selectedProjectId',
+                message: `Which project for event "${event.summary}"?`,
+                choices: projects.map((p) => ({ name: p.name, value: p.id })),
+              },
+            ]);
+            eventProjectId = selectedProjectId;
+            setEventProject(event.summary, eventProjectId);
+          }
+
           console.log(`Logging "${event.summary}" to Clockify...`);
           await clockify.logTime(
             user.activeWorkspace,
-            projectId,
+            eventProjectId,
             event.start.dateTime,
             event.end.dateTime,
             event.summary,
