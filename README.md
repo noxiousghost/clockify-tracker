@@ -1,8 +1,8 @@
-# Clockify Tracker CLI
+# Clocktopus CLI
 
 ## About
 
-This Clockify Tracker CLI is a powerful command-line interface tool designed to streamline your time tracking with Clockify. It offers a suite of features to automate and simplify the process of logging your work, ensuring accuracy and efficiency.
+This Clocktopus CLI is a powerful command-line interface tool designed to streamline your time tracking with Clockify. It offers a suite of features to automate and simplify the process of logging your work, ensuring accuracy and efficiency.
 
 ### Key Features
 
@@ -15,13 +15,13 @@ This Clockify Tracker CLI is a powerful command-line interface tool designed to 
 
 ## Installation
 
-To get started with the Clockify Tracker CLI, follow these steps:
+To get started with the Clocktopus CLI, follow these steps:
 
 1.  **Clone the repository:**
 
     ```bash
     git clone <repository_url>
-    cd clockify-tracker
+    cd clocktopus
     ```
 
 2.  **Install dependencies:**
@@ -241,23 +241,24 @@ apt install libxss-dev pkg-config build-essential
 If you super lazy just like me, then you can add aliases for different actions. Here is what I use:
 
 ```bash
-# Clockify Tracker
-CLOCKIFY_TRACKER_PATH="$HOME/Projects/Personal/clockify-tracker"
+# Clocktopus
+CLOCKTOPUS_PATH="$HOME/Projects/Personal/clocktopus"
 
-ct() {
-  cd "$CLOCKIFY_TRACKER_PATH" || return
+clocktopus() {
+  cd "$CLOCKTOPUS_PATH" || return
   yarn "$@"
 }
 
-#ct = Clockify Tracker
-alias cbuild="ct build" # Build
-alias cstart="ct clock start" # Clock Up
-alias cstop="ct clock stop" # Clock down
-alias mstart="ct monitor" # Monitor Up
-alias mstop="ct monitor:stop" # Monitor Down
-alias mrestart="ct monitor:restart" # Monitor Restart
-alias msstatus="ct monitor:status" # Monitor Status
-alias mlogs="ct monitor:logs" # Monitor Logs
+alias cbuild="clocktopus build"
+alias cstart="clocktopus clock start"
+alias cstop="clocktopus clock stop"
+alias mstart="clocktopus monitor"
+alias mstop="clocktopus monitor:stop"
+alias mrestart="clocktopus monitor:restart"
+alias mstatus="clocktopus monitor:status"
+alias mlogs="clocktopus monitor:logs"
+alias cgcalauth="clocktopus google-auth"
+alias cgcal="clocktopus log-calendar"
 ```
 
-Copy the above code in `.zshrc` file, change `CLOCKIFY_TRACKER_PATH` based on your path and save it. Then source the file using `source ~/.zshrc`.
+Copy the above code in `.zshrc` file, change `CLOCKTOPUS_PATH` based on your path and save it. Then source the file using `source ~/.zshrc`.

@@ -46,7 +46,7 @@ export async function stopJiraTimer(ticketId: string, timeSpentSeconds: number) 
           content: [
             {
               type: 'text',
-              text: 'Timer stopped from Clockify Tracker',
+              text: 'Timer stopped from Clocktopus',
             },
           ],
         },
