@@ -6,7 +6,7 @@
 
 ## About
 
-This Clocktopus is a powerful command-line interface tool designed to streamline your time tracking with Clockify. It offers a suite of features to automate and simplify the process of logging your work, ensuring accuracy and efficiency.
+Clocktopus is a powerful command-line interface tool designed to streamline your time tracking with platforms like Clockify and Jira. It offers a suite of features to automate and simplify the process of logging your work, ensuring accuracy and efficiency.
 
 ### Key Features
 
