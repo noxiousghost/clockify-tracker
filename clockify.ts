@@ -190,4 +190,23 @@ export class Clockify {
       return null;
     }
   }
+
+  async logTime(workspaceId: string, projectId: string, start: string, end: string, description: string) {
+    try {
+      const response = await this.httpClient.post(`/workspaces/${workspaceId}/time-entries`, {
+        projectId: projectId,
+        start: start,
+        end: end,
+        description: description,
+      });
+      return response.data;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('Error logging time:', error.message);
+      } else {
+        console.error('Error logging time: An unknown error occurred.');
+      }
+      return null;
+    }
+  }
 }

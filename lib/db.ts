@@ -37,9 +37,29 @@ function getDb(): Database.Database {
         jiraTicket TEXT
       )
     `);
+    dbInstance.exec(`
+      CREATE TABLE IF NOT EXISTS google_tokens (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        token TEXT NOT NULL,
+        createdAt TEXT NOT NULL
+      )
+    `);
   }
 
   return dbInstance;
+}
+
+export function storeToken(token: object) {
+  const db = getDb();
+  const stmt = db.prepare('INSERT INTO google_tokens (token, createdAt) VALUES (?, ?)');
+  stmt.run(JSON.stringify(token), new Date().toISOString());
+}
+
+export function getLatestToken() {
+  const db = getDb();
+  const stmt = db.prepare('SELECT * FROM google_tokens ORDER BY createdAt DESC LIMIT 1');
+  const row = stmt.get() as { token: string } | undefined;
+  return row ? JSON.parse(row.token) : null;
 }
 
 export function logSessionStart(
