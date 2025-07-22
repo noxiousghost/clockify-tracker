@@ -1,8 +1,12 @@
-# Clocktopus CLI
+# Clocktopus
+
+<p align="center">
+  <img src="assets/logo.png" alt="Clocktopus Logo" />
+</p>
 
 ## About
 
-This Clocktopus CLI is a powerful command-line interface tool designed to streamline your time tracking with Clockify. It offers a suite of features to automate and simplify the process of logging your work, ensuring accuracy and efficiency.
+This Clocktopus is a powerful command-line interface tool designed to streamline your time tracking with Clockify. It offers a suite of features to automate and simplify the process of logging your work, ensuring accuracy and efficiency.
 
 ### Key Features
 
