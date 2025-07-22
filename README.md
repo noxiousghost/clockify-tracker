@@ -2,7 +2,16 @@
 
 ## About
 
-This is a simple command-line interface (CLI) tool designed to help you track your time using Clockify. It allows you to start, stop, and check the status of your time entries directly from your terminal.
+This Clockify Tracker CLI is a powerful command-line interface tool designed to streamline your time tracking with Clockify. It offers a suite of features to automate and simplify the process of logging your work, ensuring accuracy and efficiency.
+
+### Key Features
+
+- **Automated Idle Monitoring:** Automatically stops and restarts timers based on your system's idle activity.
+- **Jira Integration:** Seamlessly link your time entries to Jira tickets, fetching and prepending ticket titles to descriptions.
+- **Google Calendar Integration:** Log your Google Calendar events directly as Clockify time entries, with intelligent project caching for recurring events.
+- **Local Project Filtering:** Curate a personalized list of projects for quick selection, reducing clutter.
+- **Session Management:** Start, stop, and check the status of your time entries directly from the terminal.
+- **Database Cleanup:** Easily manage and clean up old session logs from the local SQLite database.
 
 ## Installation
 
@@ -163,6 +172,45 @@ Examples:
   ```bash
   yarn db:cleanup 5
   ```
+
+### Google Calendar Integration
+
+This tool can log your Google Calendar events as time entries in Clockify. This is particularly useful for automatically tracking time spent in meetings or other scheduled events.
+
+#### 1. Google Authentication
+
+Before you can log calendar events, you need to authenticate with your Google account. This will grant the tool read-only access to your Google Calendar.
+
+```bash
+yarn google-auth
+```
+
+Follow the prompts in your browser to complete the authentication process. A token will be stored locally to maintain your session.
+
+#### 2. Log Calendar Events
+
+Once authenticated, you can log events for a specific date range:
+
+```bash
+yarn log-calendar -s <start-date> -e <end-date>
+```
+
+- `<start-date>`: The start date for fetching calendar events (e.g., `2025-07-21`).
+- `<end-date>`: The end date for fetching calendar events (e.g., `2025-07-22`).
+
+For each calendar event, the tool will prompt you to select a Clockify project. Your selection will be cached based on the event's summary (name), so if you have recurring events with the same name, you will only be asked once for the project. If you provide a `project-id` using the `-p` flag, all events will be logged to that project without prompting.
+
+Example:
+
+```bash
+yarn log-calendar -s 2025-07-21 -e 2025-07-22
+```
+
+Or, to log all events to a specific project:
+
+```bash
+yarn log-calendar -s 2025-07-21 -e 2025-07-22 -p your_clockify_project_id
+```
 
 ## Troubleshooting
 
