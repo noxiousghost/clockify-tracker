@@ -40,6 +40,8 @@ CLOCKIFY_API_KEY="your_clockify_api_key_here"
 ATLASSIAN_URL="https://your_org.atlassian.net/rest/api/3"
 ATLASSIAN_API_TOKEN="your_atlassian_api_token_here"
 ATLASSIAN_EMAIL="username@example.com"
+GOOGLE_CLIENT_ID="google_client_id"
+GOOGLE_CLIENT_SECRET="google_client_secret"
 ```
 
 > Note: If you do not want to use Jira Integration, you can remove the ATLASSIAN variables.
